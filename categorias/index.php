@@ -6,9 +6,23 @@
         $sentencia = $conexion->prepare("DELETE FROM categoria WHERE id_categoria=:id");
         $sentencia->bindParam(":id", $txtID);
         $sentencia->execute();
-        header("Location:index.php");
+        //header("Location:index.php");
         // $mensaje = "Registro eliminado";
         // header("Location:index.php?mensaje=".$mensaje);
+        echo '
+            <script>
+                document.addEventListener("DOMContentLoaded", function(){
+                    Swal.fire({
+                        icon:"success",
+                        title: "Exito",
+                        text: "Registro borrado"
+                    }).then(function(){
+                        window.location.href = "index.php"
+                    })
+                })
+            </script>
+        ';
+
     }
 ?>
 
