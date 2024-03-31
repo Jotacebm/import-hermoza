@@ -1,34 +1,22 @@
-<?php include("../conexion/bd.php");?>
+<?php 
+    include("../conexion/bd.php");
 
-<?php
-    if(isset($_GET['txtID'])){
-        $txtID= isset($_GET['txtID'])?$_GET['txtID']:"";
-        $sentencia = $conexion->prepare("DELETE FROM categoria WHERE id_categoria=:id");
-        $sentencia->bindParam(":id", $txtID);
-        $sentencia->execute();
-        header("Location:index.php");
-        // $mensaje = "Registro eliminado";
-        // header("Location:index.php?mensaje=".$mensaje);
-    }
-?>
-
-<?php if(isset($_GET['mensaje'])){?>
-    <!-- <script>
-        Swal.fire({
-            icon:"success",
-            title: "<?php echo $_GET['mensaje']; ?>"
-        })
-    </script> -->
-<?php }?>
-
-
-<?php     
     $consulta = $conexion->prepare("SELECT * FROM categoria");
     $consulta->execute();
     $registro_categoria = $consulta->fetchAll(PDO::FETCH_ASSOC);
+
 ?>
 
-
+<?php 
+    if(isset($_GET['txtID'])){
+        $txtID = (isset($_GET['txtID'])?$_GET['txtID']:"");
+        $consulta = $conexion->prepare("SELECT * FROM categoria WHERE id_categoria=:id_categoria");
+        $consulta->bindParam(":id_categoria", $txtID);
+        $consulta->execute();
+        $registro = $consulta->fetch(PDO::FETCH_LAZY);
+        $nombre = $registro['nombre'];
+    }
+?>
 
 <!DOCTYPE html>
 <html lang="es" data-bs-theme="dark">
@@ -45,10 +33,7 @@
     <link rel="stylesheet" href="../css/style.css">
 
     <link rel="stylesheet" href="https://cdn.datatables.net/2.0.2/css/dataTables.dataTables.css" />
-
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
-
 
 <body>
     <div class="wrapper">
@@ -74,28 +59,14 @@
                             <i class="ri-list-view"></i>
                             Categorias
                         </a>
-                        <!-- <ul id="pages" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
-                            <li class="sidebar-item">
-                                <a href="#" class="sidebar-link">Page 1</a>
-                            </li>
-                            <li class="sidebar-item">
-                                <a href="#" class="sidebar-link">Page 2</a>
-                            </li>
-                        </ul> -->
+
                     </li>
                     <li class="sidebar-item">
                         <a href="#" class="sidebar-link collapsed" data-bs-target="#pages" data-bs-toggle="collapse" aria-expanded="false">
                             <i class="ri-list-view"></i>
                             Subcategorias
                         </a>
-                        <!-- <ul id="pages" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
-                            <li class="sidebar-item">
-                                <a href="#" class="sidebar-link">Page 1</a>
-                            </li>
-                            <li class="sidebar-item">
-                                <a href="#" class="sidebar-link">Page 2</a>
-                            </li>
-                        </ul> -->
+
                     </li>
                     <li class="sidebar-item">
                         <a href="#" class="sidebar-link collapsed" data-bs-target="#posts" data-bs-toggle="collapse"
@@ -103,17 +74,7 @@
                             <i class="ri-list-check"></i>
                             Marcas
                         </a>
-                        <!-- <ul id="posts" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
-                            <li class="sidebar-item">
-                                <a href="#" class="sidebar-link">Post 1</a>
-                            </li>
-                            <li class="sidebar-item">
-                                <a href="#" class="sidebar-link">Post 2</a>
-                            </li>
-                            <li class="sidebar-item">
-                                <a href="#" class="sidebar-link">Post 3</a>
-                            </li>
-                        </ul> -->
+
                     </li>
 
                     <li class="sidebar-item">
@@ -121,17 +82,7 @@
                             <i class="ri-box-3-line"></i>
                             <small>Productos</small>
                         </a>
-                        <!-- <ul id="posts" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
-                            <li class="sidebar-item">
-                                <a href="#" class="sidebar-link">Post 1</a>
-                            </li>
-                            <li class="sidebar-item">
-                                <a href="#" class="sidebar-link">Post 2</a>
-                            </li>
-                            <li class="sidebar-item">
-                                <a href="#" class="sidebar-link">Post 3</a>
-                            </li>
-                        </ul> -->
+
                     </li>
                     <li class="sidebar-item">
                         <a href="#" class="sidebar-link collapsed" data-bs-target="#auth" data-bs-toggle="collapse"
@@ -139,41 +90,9 @@
                             <i class="ri-user-line"></i>
                             Usuarios
                         </a>
-                        <!-- <ul id="auth" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
-                            <li class="sidebar-item">
-                                <a href="#" class="sidebar-link">Login</a>
-                            </li>
-                            <li class="sidebar-item">
-                                <a href="#" class="sidebar-link">Register</a>
-                            </li>
-                            <li class="sidebar-item">
-                                <a href="#" class="sidebar-link">Forgot Password</a>
-                            </li>
-                        </ul> -->
+
                     </li>
-                    <!-- <li class="sidebar-header">
-                        Sitio web
-                    </li>
-                    <li class="sidebar-item">
-                        <a href="#" class="sidebar-link collapsed" data-bs-target="#multi" data-bs-toggle="collapse"
-                            aria-expanded="false"><i class="fa-solid fa-share-nodes pe-2"></i>
-                            Multi Dropdown
-                        </a>
-                        <ul id="multi" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
-                            <li class="sidebar-item">
-                                <a href="#" class="sidebar-link collapsed" data-bs-target="#level-1"
-                                    data-bs-toggle="collapse" aria-expanded="false">Level 1</a>
-                                <ul id="level-1" class="sidebar-dropdown list-unstyled collapse">
-                                    <li class="sidebar-item">
-                                        <a href="#" class="sidebar-link">Level 1.1</a>
-                                    </li>
-                                    <li class="sidebar-item">
-                                        <a href="#" class="sidebar-link">Level 1.2</a>
-                                    </li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </li> -->
+
                 </ul>
             </div>
         </aside>
@@ -186,7 +105,7 @@
                     <ul class="navbar-nav">
                         <li class="nav-item dropdown">
                             <a href="#" data-bs-toggle="dropdown" class="nav-icon pe-md-0">
-                                <img src="../image/profile.jpg" class="avatar img-fluid rounded" alt="">
+                                <img src="image/profile.jpg" class="avatar img-fluid rounded" alt="">
                             </a>
                             <div class="dropdown-menu dropdown-menu-end">
                                 <a href="#" class="dropdown-item">Perfil</a>
@@ -215,7 +134,7 @@
                                             </div>
                                         </div>
                                         <div class="col-6 align-self-end text-end">
-                                            <img src="../image/customer-support.jpg" class="img-fluid illustration-img"
+                                            <img src="image/customer-support.jpg" class="img-fluid illustration-img"
                                                 alt="">
                                         </div>
                                     </div>
@@ -251,65 +170,59 @@
                     <div class="card border-0">
                         <div class="card-header">
                             <h5 class="card-title">
-                                Categorias
+                                Editar Categoria
                             </h5>
-                            <h6 class="card-subtitle text-muted">
+
+                        </div>
+                        <div class="card-body table-responsive">
+                            <form action="#" method="post">
+                                <div class="mb-3">
+                                    <label for="id" class="form-label">ID</label>
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        name="id"
+                                        id="id"
+                                        aria-describedby="helpId"
+                                        placeholder="ID"
+                                        value = "<?php echo $txtID; ?>"
+                                        readonly
+                                    />
+                                    
+                                </div>
+                                
+                                <div class="mb-3">
+                                    <label for="nombre" class="form-label">Nombre</label>
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        name="nombre"
+                                        id="nombre"
+                                        aria-describedby="helpId"
+                                        placeholder="Nombre"
+                                        value = "<?php echo $nombre; ?>"
+                                    />
+                                </div>
+
+                                <button
+                                    type="button"
+                                    class="btn btn-success"
+                                >
+                                    Actualizar
+                                </button>
+
                                 <a
                                     name=""
                                     id=""
-                                    class="btn btn-success"
-                                    href="nuevo.php"
+                                    class="btn btn-danger"
+                                    href="index.php"
                                     role="button"
-                                    >Nuevo</a
+                                    >Cancelar</a
                                 >
                                 
-                            </h6>
-                        </div>
-                        <div class="card-body table-responsive">
-                            <table class="table table-sm" id="tabla_id">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">#</th>
-                                        <th scope="col">Nombre</th>
-                                        <th scope="col">Acciones</th>
-
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php foreach($registro_categoria as $categoria){ ?>
-                                    <tr>
-                                        <th scope="row"><?php echo $categoria['id_categoria']; ?></th>
-                                        <td><?php echo $categoria['nombre']; ?></td>
-                                        <td>
-                                            <a
-                                                name=""
-                                                id=""
-                                                class="btn btn-primary"
-                                                href="editar.php?txtID=<?php echo $categoria['id_categoria'];?>"
-                                                role="button"
-                                            >
-                                                Editar
-                                                <i class="ri-pencil-line"></i>
-                                                </a
-                                            >
-                                            
-                                            <a
-                                                name=""
-                                                id=""
-                                                class="btn btn-danger"
-                                                href="javascript:borrar(<?php echo $categoria['id_categoria']; ?>)"
-                                                role="button"
-                                            >
-                                            Eliminar
-                                            <i class="ri-delete-bin-line"></i>
-                                                </a
-                                            >
-                                        </td>
-                                        
-                                    </tr>
-                                    <?php } ?>
-                                </tbody>
-                            </table>
+                                
+                                
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -352,29 +265,17 @@
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/script.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script src="https://cdn.datatables.net/2.0.2/js/dataTables.js"></script>
     <script src="../js/script.js"></script>
-    <script>
-        function borrar(id){
-            Swal.fire({
-                title: "¿Esta seguro que Desea borrar?",
-                showCancelButton:true,
-                confirmButtonText: "Si, borrar"
-            }).then((result)=>{
-                if(result.isConfirmed){
-                    window.location.href ="index.php?txtID="+id;
-                }
-            })
-        }
-    </script>
     <script>
         $(document).ready(function(){
             $("#tabla_id").DataTable({
                 "pages":3,
                 lengthMenu:[
-                    [3,10,25,50,100],
-                    [3,10,25,50,100]
+                    [3,10,25,50],
+                    [3,10,25,50]
                 ],
                 "language":{
                     "url": "https://cdn.datatables.net/plug-ins/1.13.1/i18n/es-ES.json"
@@ -382,8 +283,6 @@
             });
         });
     </script>
-
-
 </body>
 
 </html>

@@ -1,6 +1,8 @@
 <?php 
     include("../conexion/bd.php");
+?>
 
+<?php
     $consulta = $conexion->prepare("SELECT * FROM categoria");
     $consulta->execute();
     $registro_categoria = $consulta->fetchAll(PDO::FETCH_ASSOC);
@@ -9,14 +11,80 @@
 
 <?php 
     if(isset($_GET['txtID'])){
-        $txtID = (isset($_GET['txtID'])?$_GET['txtID']:"");
-        $consulta = $conexion->prepare("SELECT * FROM categoria WHERE id_categoria=:id_categoria");
-        $consulta->bindParam(":id_categoria", $txtID);
-        $consulta->execute();
-        $registro = $consulta->fetch(PDO::FETCH_LAZY);
+        $txtID = isset($_GET['txtID'])?$_GET['txtID']:"";
+        $consulta2 = $conexion->prepare("SELECT * FROM categoria WHERE id_categoria=:id");
+        $consulta2->bindParam(":id", $txtID);
+        $consulta2->execute();
+        $registro = $consulta2->fetch(PDO::FETCH_LAZY);
         $nombre = $registro['nombre'];
     }
 ?>
+
+<?php
+    // if(isset($_GET['mensaje'])){
+    //     $mensaje = $_GET['mensaje'];
+    //     echo "<script>
+    //             Swal.fire({
+    //                 icon: 'success',
+    //                 title: '$mensaje'
+    //             });
+    //         </script>";
+    // }
+    ?>
+
+<?php
+    if($_POST){
+        $nombrecategoria = isset($_POST['nombre'])?$_POST['nombre']:"";
+        $consulta3 = $conexion->prepare("UPDATE categoria SET nombre=:nombre WHERE id_categoria=:id");
+        $consulta3->bindParam(":nombre", $nombrecategoria);
+        $consulta3->bindParam(":id", $txtID);
+        $consulta3->execute();
+        
+        echo '
+            <script>
+                document.addEventListener("DOMContentLoaded", function(){
+                    Swal.fire({
+                        icon: "success",
+                        title: "Exito",
+                        text: "Registro actualizado"
+                    }).then(function(){
+                        window.location.href = "index.php";
+                    })
+                })
+            </script>
+        ';
+        // echo '
+        //     <script>
+        //         document.addEventListener("DOMContentLoaded", function(){
+        //             Swal.fire({
+        //                 icon: "success",
+        //                 title: "Exito",
+        //                 text: "Registro actualizado"
+        //             }).then(function(){
+        //                 window.location.href="index.php";
+        //             })
+        //         })
+        //     </script>
+        //     ';
+
+    }
+    ?>
+
+
+
+<?php 
+if(isset($_GET['mensaje'])){
+    ?>
+    <script>
+        Swal.fire({icon:"success",title: "<?php echo $_GET['mensaje'];?>"});
+    </script>
+<?php 
+ }
+?>
+
+
+
+
 
 <!DOCTYPE html>
 <html lang="es" data-bs-theme="dark">
@@ -33,7 +101,10 @@
     <link rel="stylesheet" href="../css/style.css">
 
     <link rel="stylesheet" href="https://cdn.datatables.net/2.0.2/css/dataTables.dataTables.css" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
+
+
 
 <body>
     <div class="wrapper">
@@ -185,8 +256,9 @@
                                         id="id"
                                         aria-describedby="helpId"
                                         placeholder="ID"
-                                        value = "<?php echo $txtID; ?>"
                                         readonly
+                                        value="<?php echo $txtID; ?>"
+                                        
                                     />
                                     
                                 </div>
@@ -200,12 +272,12 @@
                                         id="nombre"
                                         aria-describedby="helpId"
                                         placeholder="Nombre"
-                                        value = "<?php echo $nombre; ?>"
+                                        value="<?php echo $nombre; ?>"
                                     />
                                 </div>
 
                                 <button
-                                    type="button"
+                                    type="submit"
                                     class="btn btn-success"
                                 >
                                     Actualizar
@@ -269,6 +341,7 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script src="https://cdn.datatables.net/2.0.2/js/dataTables.js"></script>
     <script src="../js/script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         $(document).ready(function(){
             $("#tabla_id").DataTable({
@@ -283,6 +356,10 @@
             });
         });
     </script>
+
+
+
+
 </body>
 
 </html>
