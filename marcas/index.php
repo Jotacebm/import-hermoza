@@ -7,6 +7,29 @@
 
 ?>
 
+<?php
+    if(isset($_GET['txtID'])){
+        $txtID = isset($_GET['txtID'])?$_GET['txtID']:"";
+        $consulta1 = $conexion->prepare("DELETE FROM marca WHERE id_marca=:id");
+        $consulta1->bindParam(":id", $txtID);
+        $consulta1->execute();
+        //header("Location:index.php");
+        echo '
+            <script>
+                document.addEventListener("DOMContentLoaded", function(){
+                    Swal.fire({
+                        icon: "success",
+                        title: "Exito",
+                        text: "Marca eliminada"
+                    }).then(function(){
+                        window.location.href = "index.php";
+                    })
+                })
+            </script>
+        ';
+    }
+?>
+
 <!DOCTYPE html>
 <html lang="es" data-bs-theme="dark">
 
@@ -47,28 +70,14 @@
                             <i class="ri-list-view"></i>
                             Categorias
                         </a>
-                        <!-- <ul id="pages" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
-                            <li class="sidebar-item">
-                                <a href="#" class="sidebar-link">Page 1</a>
-                            </li>
-                            <li class="sidebar-item">
-                                <a href="#" class="sidebar-link">Page 2</a>
-                            </li>
-                        </ul> -->
+
                     </li>
                     <li class="sidebar-item">
                         <a href="#" class="sidebar-link collapsed" data-bs-target="#pages" data-bs-toggle="collapse" aria-expanded="false">
                             <i class="ri-list-view"></i>
                             Subcategorias
                         </a>
-                        <!-- <ul id="pages" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
-                            <li class="sidebar-item">
-                                <a href="#" class="sidebar-link">Page 1</a>
-                            </li>
-                            <li class="sidebar-item">
-                                <a href="#" class="sidebar-link">Page 2</a>
-                            </li>
-                        </ul> -->
+
                     </li>
                     <li class="sidebar-item">
                         <a href="#" class="sidebar-link collapsed" data-bs-target="#posts" data-bs-toggle="collapse"
@@ -76,17 +85,7 @@
                             <i class="ri-list-check"></i>
                             Marcas
                         </a>
-                        <!-- <ul id="posts" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
-                            <li class="sidebar-item">
-                                <a href="#" class="sidebar-link">Post 1</a>
-                            </li>
-                            <li class="sidebar-item">
-                                <a href="#" class="sidebar-link">Post 2</a>
-                            </li>
-                            <li class="sidebar-item">
-                                <a href="#" class="sidebar-link">Post 3</a>
-                            </li>
-                        </ul> -->
+
                     </li>
 
                     <li class="sidebar-item">
@@ -94,17 +93,7 @@
                             <i class="ri-box-3-line"></i>
                             <small>Productos</small>
                         </a>
-                        <!-- <ul id="posts" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
-                            <li class="sidebar-item">
-                                <a href="#" class="sidebar-link">Post 1</a>
-                            </li>
-                            <li class="sidebar-item">
-                                <a href="#" class="sidebar-link">Post 2</a>
-                            </li>
-                            <li class="sidebar-item">
-                                <a href="#" class="sidebar-link">Post 3</a>
-                            </li>
-                        </ul> -->
+
                     </li>
                     <li class="sidebar-item">
                         <a href="#" class="sidebar-link collapsed" data-bs-target="#auth" data-bs-toggle="collapse"
@@ -112,41 +101,8 @@
                             <i class="ri-user-line"></i>
                             Usuarios
                         </a>
-                        <!-- <ul id="auth" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
-                            <li class="sidebar-item">
-                                <a href="#" class="sidebar-link">Login</a>
-                            </li>
-                            <li class="sidebar-item">
-                                <a href="#" class="sidebar-link">Register</a>
-                            </li>
-                            <li class="sidebar-item">
-                                <a href="#" class="sidebar-link">Forgot Password</a>
-                            </li>
-                        </ul> -->
                     </li>
-                    <!-- <li class="sidebar-header">
-                        Sitio web
-                    </li>
-                    <li class="sidebar-item">
-                        <a href="#" class="sidebar-link collapsed" data-bs-target="#multi" data-bs-toggle="collapse"
-                            aria-expanded="false"><i class="fa-solid fa-share-nodes pe-2"></i>
-                            Multi Dropdown
-                        </a>
-                        <ul id="multi" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
-                            <li class="sidebar-item">
-                                <a href="#" class="sidebar-link collapsed" data-bs-target="#level-1"
-                                    data-bs-toggle="collapse" aria-expanded="false">Level 1</a>
-                                <ul id="level-1" class="sidebar-dropdown list-unstyled collapse">
-                                    <li class="sidebar-item">
-                                        <a href="#" class="sidebar-link">Level 1.1</a>
-                                    </li>
-                                    <li class="sidebar-item">
-                                        <a href="#" class="sidebar-link">Level 1.2</a>
-                                    </li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </li> -->
+
                 </ul>
             </div>
         </aside>
@@ -267,7 +223,7 @@
                                                 name=""
                                                 id=""
                                                 class="btn btn-danger"
-                                                href="#"
+                                                href="javascript:borrar(<?php echo $marca['id_marca'];?>)"
                                                 role="button"
                                                 >Eliminar</a
                                             >  
@@ -314,6 +270,8 @@
     <script src="js/script.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script src="https://cdn.datatables.net/2.0.2/js/dataTables.js"></script>
+    <!-- cdn sweetalert -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="../js/script.js"></script>
     <script>
         $(document).ready(function(){
@@ -328,6 +286,21 @@
                 }
             });
         });
+    </script>
+
+    <script>
+        function borrar(id){
+            Swal.fire({
+                icon: "success",
+                title: "¿Desea Eliminar?",
+                showCancelButton: true,
+                confirmButtonText: "Si, borrar"
+            }).then((result)=>{
+                if(result.isConfirmed){
+                    window.location = "index.php?txtID="+id;
+                }
+            })
+        }
     </script>
 
 </body>

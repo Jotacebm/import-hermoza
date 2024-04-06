@@ -8,13 +8,46 @@
 ?>
 
 <?php 
+    // if(isset($_GET['txtID'])){
+    //     $txtID = (isset($_GET['txtID'])?$_GET['txtID']:"");
+    //     $consulta = $conexion->prepare("SELECT * FROM marca WHERE id_marca=:id_marca");
+    //     $consulta->bindParam(":id_marca", $txtID);
+    //     $consulta->execute();
+    //     $registro = $consulta->fetch(PDO::FETCH_LAZY);
+    //     $nombremarca = $registro['nombre'];
+    // }
+
     if(isset($_GET['txtID'])){
-        $txtID = (isset($_GET['txtID'])?$_GET['txtID']:"");
-        $consulta = $conexion->prepare("SELECT * FROM marca WHERE id_marca=:id_marca");
-        $consulta->bindParam(":id_marca", $txtID);
-        $consulta->execute();
-        $registro = $consulta->fetch(PDO::FETCH_LAZY);
-        $nombremarca = $registro['nombre'];
+        $txtID = isset($_GET['txtID'])?$_GET['txtID']:"";
+        $consulta1 = $conexion->prepare("SELECT * FROM marca WHERE id_marca=:id");
+        $consulta1->bindParam(":id", $txtID);
+        $consulta1->execute();
+        $registro_marca = $consulta1->fetch(PDO::FETCH_LAZY);
+    }
+?>
+
+<?php
+    if($_POST){
+        $txtID = isset($_GET['txtID'])?$_GET['txtID']:"";
+        $nombremarca = isset($_POST['nombremarca'])?$_POST['nombremarca']:"";
+        $consulta2 = $conexion->prepare("UPDATE marca SET nombre=:nombre WHERE id_marca=:id");
+        $consulta2->bindParam(":nombre", $nombremarca);
+        $consulta2->bindParam(":id", $txtID);
+        $consulta2->execute();
+        //header("Location:index.php");
+        echo '
+            <script>
+                document.addEventListener("DOMContentLoaded", function(){
+                    Swal.fire({
+                        icon: "success",
+                        title: "Exito",
+                        text: "Registro Actualizado"
+                    }).then(function(){
+                        window.href="index.php";
+                    })
+                })
+            </script>
+        ';
     }
 ?>
 
@@ -217,8 +250,8 @@
                                         id="idmarca"
                                         aria-describedby="helpId"
                                         placeholder="ID"
-                                        value="<?php echo $txtID; ?>"
                                         readonly
+                                        value = "<?php echo $registro_marca['id_marca']; ?>"
                                     />
                                 </div>
 
@@ -231,12 +264,12 @@
                                         id="nombremarca"
                                         aria-describedby="helpId"
                                         placeholder="Nombre"
-                                        value="<?php echo $nombremarca; ?>"
+                                        value= "<?php echo $registro_marca['nombre']; ?>"
                                     />
                                 </div>
 
                                 <button
-                                    type="button"
+                                    type="submit"
                                     class="btn btn-success"
                                 >
                                     Actualizar
@@ -278,15 +311,6 @@
                                 <li class="list-inline-item">
                                     <a href="#" class="text-muted">Desarrollado por Corporacion Sivana</a>
                                 </li>
-                                <!-- <li class="list-inline-item">
-                                    <a href="#" class="text-muted">Acerca de</a>
-                                </li>
-                                <li class="list-inline-item">
-                                    <a href="#" class="text-muted">Terminos</a>
-                                </li>
-                                <li class="list-inline-item">
-                                    <a href="#" class="text-muted">Reservas</a>
-                                </li> -->
                             </ul>
                         </div>
                     </div>

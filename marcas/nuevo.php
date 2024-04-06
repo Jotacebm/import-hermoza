@@ -1,10 +1,77 @@
-<?php 
-    include("../conexion/bd.php");
+<?php include("../conexion/bd.php"); ?>
 
+<?php 
     $consulta = $conexion->prepare("SELECT * FROM marca");
     $consulta->execute();
     $registro_marca = $consulta->fetchAll(PDO::FETCH_ASSOC);
 
+?>
+
+<?php
+    function alerta($icono, $titulo, $texto){
+        echo '
+            <script>
+            document.addEventListener("DOMContentLoaded", function(){
+                Swal.fire({
+                    icon: "' .$icono. '",
+                    title: "' .$titulo. '",
+                    text: "' .$texto. '"
+                })
+            })
+            </script>
+        ';
+    }
+?>
+
+<?php
+    if($_POST){
+        $nombremarca = isset($_POST['nombremarca'])?$_POST['nombremarca']:"";
+        if(empty($nombremarca)){
+            //echo "El nombre de la marca no puede estar vacio";
+            alerta("warning", "Alerta", "El nombre de la marca no puede estar vacio");
+        }
+        else{
+            $nombreMarcaSanitizado = filter_var($nombremarca, FILTER_SANITIZE_STRING);
+            if(preg_match('/^[a-zA-Z0-9\s()]+$/', $nombreMarcaSanitizado)){
+                $consulta1 = $conexion->prepare("INSERT INTO marca (id_marca,nombre) VALUES(NULL, :nombre)");
+                $consulta1->bindParam(":nombre", $nombreMarcaSanitizado);
+                try {
+                    if($consulta1->execute()){
+                        //echo "Nombre de marca agregado";
+                        //alerta("success", "Exito", "Nombre de la marca agregado con exito");
+                        echo '
+                            <script>
+                                document.addEventListener("DOMContentLoaded", function(){
+                                    Swal.fire({
+                                        icon: "success",
+                                        title: "Exito",
+                                        text: "Marca agregada con exito"
+
+                                    }).then(function(){
+                                        window.location.href="index.php"
+                                    })
+                                })
+                            </script>
+                        ';
+                    }
+                } catch (PDOException $e) {
+                    if($e->errorInfo[1] == 1062){
+                        //echo "El nombre de la marca ya existe";
+                        alerta("warning", "Alerta", "El nombre de la marca ya existe");
+                    }
+                    else{
+                        //echo "Error en la insercion en la bd";
+                        alerta("error","Error", "Error en la insercion en la bd");
+                    }
+
+                }
+            }
+            else{
+                //echo "El nombre de la marca solo puede contener letras o numeros";
+                alerta("warning",  "Alerta", "El nombre de la marca solo puede contener letras o numeros");
+            }
+        }
+    }
 ?>
 
 <!DOCTYPE html>
@@ -47,28 +114,14 @@
                             <i class="ri-list-view"></i>
                             Categorias
                         </a>
-                        <!-- <ul id="pages" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
-                            <li class="sidebar-item">
-                                <a href="#" class="sidebar-link">Page 1</a>
-                            </li>
-                            <li class="sidebar-item">
-                                <a href="#" class="sidebar-link">Page 2</a>
-                            </li>
-                        </ul> -->
+            
                     </li>
                     <li class="sidebar-item">
                         <a href="#" class="sidebar-link collapsed" data-bs-target="#pages" data-bs-toggle="collapse" aria-expanded="false">
                             <i class="ri-list-view"></i>
                             Subcategorias
                         </a>
-                        <!-- <ul id="pages" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
-                            <li class="sidebar-item">
-                                <a href="#" class="sidebar-link">Page 1</a>
-                            </li>
-                            <li class="sidebar-item">
-                                <a href="#" class="sidebar-link">Page 2</a>
-                            </li>
-                        </ul> -->
+                
                     </li>
                     <li class="sidebar-item">
                         <a href="#" class="sidebar-link collapsed" data-bs-target="#posts" data-bs-toggle="collapse"
@@ -76,17 +129,7 @@
                             <i class="ri-list-check"></i>
                             Marcas
                         </a>
-                        <!-- <ul id="posts" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
-                            <li class="sidebar-item">
-                                <a href="#" class="sidebar-link">Post 1</a>
-                            </li>
-                            <li class="sidebar-item">
-                                <a href="#" class="sidebar-link">Post 2</a>
-                            </li>
-                            <li class="sidebar-item">
-                                <a href="#" class="sidebar-link">Post 3</a>
-                            </li>
-                        </ul> -->
+    
                     </li>
 
                     <li class="sidebar-item">
@@ -94,17 +137,6 @@
                             <i class="ri-box-3-line"></i>
                             <small>Productos</small>
                         </a>
-                        <!-- <ul id="posts" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
-                            <li class="sidebar-item">
-                                <a href="#" class="sidebar-link">Post 1</a>
-                            </li>
-                            <li class="sidebar-item">
-                                <a href="#" class="sidebar-link">Post 2</a>
-                            </li>
-                            <li class="sidebar-item">
-                                <a href="#" class="sidebar-link">Post 3</a>
-                            </li>
-                        </ul> -->
                     </li>
                     <li class="sidebar-item">
                         <a href="#" class="sidebar-link collapsed" data-bs-target="#auth" data-bs-toggle="collapse"
@@ -112,41 +144,10 @@
                             <i class="ri-user-line"></i>
                             Usuarios
                         </a>
-                        <!-- <ul id="auth" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
-                            <li class="sidebar-item">
-                                <a href="#" class="sidebar-link">Login</a>
-                            </li>
-                            <li class="sidebar-item">
-                                <a href="#" class="sidebar-link">Register</a>
-                            </li>
-                            <li class="sidebar-item">
-                                <a href="#" class="sidebar-link">Forgot Password</a>
-                            </li>
-                        </ul> -->
+        
+                
                     </li>
-                    <!-- <li class="sidebar-header">
-                        Sitio web
-                    </li>
-                    <li class="sidebar-item">
-                        <a href="#" class="sidebar-link collapsed" data-bs-target="#multi" data-bs-toggle="collapse"
-                            aria-expanded="false"><i class="fa-solid fa-share-nodes pe-2"></i>
-                            Multi Dropdown
-                        </a>
-                        <ul id="multi" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
-                            <li class="sidebar-item">
-                                <a href="#" class="sidebar-link collapsed" data-bs-target="#level-1"
-                                    data-bs-toggle="collapse" aria-expanded="false">Level 1</a>
-                                <ul id="level-1" class="sidebar-dropdown list-unstyled collapse">
-                                    <li class="sidebar-item">
-                                        <a href="#" class="sidebar-link">Level 1.1</a>
-                                    </li>
-                                    <li class="sidebar-item">
-                                        <a href="#" class="sidebar-link">Level 1.2</a>
-                                    </li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </li> -->
+                    
                 </ul>
             </div>
         </aside>
@@ -224,17 +225,9 @@
                     <div class="card border-0">
                         <div class="card-header">
                             <h5 class="card-title">
-                                MARCAS
+                                AGREGAR MARCAS
                             </h5>
                             <h6 class="card-subtitle text-muted">
-                                <a
-                                    name=""
-                                    id=""
-                                    class="btn btn-success"
-                                    href="nuevo.php"
-                                    role="button"
-                                    >Nuevo</a
-                                >
                                 
                             </h6>
                         </div>
@@ -253,7 +246,7 @@
                                 </div>
 
                                 <button
-                                    type="button"
+                                    type="submit"
                                     class="btn btn-primary"
                                 >
                                     Agregar 
@@ -307,15 +300,19 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="js/script.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <!-- Cdn Datatables -->
     <script src="https://cdn.datatables.net/2.0.2/js/dataTables.js"></script>
+    <!-- Cdn SweetAlert2 CSS -->
+    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css"> -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="../js/script.js"></script>
     <script>
         $(document).ready(function(){
             $("#tabla_id").DataTable({
                 "pages":3,
                 lengthMenu:[
-                    [3,10,25,50],
-                    [3,10,25,50]
+                    [3,10,25,50,100],
+                    [3,10,25,50,100]
                 ],
                 "language":{
                     "url": "https://cdn.datatables.net/plug-ins/1.13.1/i18n/es-ES.json"

@@ -15,7 +15,7 @@
                     Swal.fire({
                         icon:"success",
                         title: "Exito",
-                        text: "Registro borrado"
+                        text: "Categoria Eliminada"
                     }).then(function(){
                         window.location.href = "index.php"
                     })
