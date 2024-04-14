@@ -1,7 +1,13 @@
 <?php 
     include("../conexion/bd.php");
 
-    $consulta = $conexion->prepare("SELECT * FROM subcategoria");
+    // $consulta = $conexion->prepare("SELECT *,
+    // (SELECT nombre FROM categoria WHERE categoria.id_categoria = subcategoria.id_categoria limit 1) as nombrecategoria
+    //  FROM subcategoria");
+    // $consulta = $conexion->prepare("SELECT subcategoria.*, categoria.nombre as nombrecategoria FROM subcategoria
+    // INNER JOIN categoria ON subcategoria.id_categoria=categoria.id_categoria");
+    $consulta = $conexion->prepare("SELECT subcategoria.*, categoria.nombre as nombrecategoria FROM subcategoria 
+    INNER JOIN categoria ON categoria.id_categoria=subcategoria.id_categoria");
     $consulta->execute();
     $registro_subcategoria = $consulta->fetchAll(PDO::FETCH_ASSOC);
 
@@ -203,7 +209,7 @@
                                     <tr>
                                         <th scope="col">#</th>
                                         <th scope="col">Nombre</th>
-                                        <th scope="col">Id categoria</th>
+                                        <th scope="col">Categoria</th>
                                         <th scope="col">Acciones</th>
 
                                     </tr>
@@ -213,14 +219,17 @@
                                     <tr>
                                         <th scope="row"><?php echo $subcategoria['id_subcategoria']; ?></th>
                                         <td><?php echo $subcategoria['nombre']; ?></td>
-                                        <td><?php echo $subcategoria['id_categoria']; ?></td>
+                                        <td><?php echo $subcategoria['nombrecategoria']; ?></td>
                                         <td>
-                                            <button
-                                                type="submit"
-                                                class="btn btn-primary"
+                                            <a
+                                                name=""
+                                                id=""
+                                                class="btn btn-success"
+                                                href="editar.php?txtID=<?php echo $subcategoria['id_subcategoria'];?>"
+                                                role="button"
+                                                >Editar</a
                                             >
-                                                Editar
-                                            </button>
+                                            
                                             <a
                                                 name=""
                                                 id=""

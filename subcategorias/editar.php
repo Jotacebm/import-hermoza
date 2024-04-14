@@ -4,10 +4,57 @@
 ?>
 
 <?php
-    $consulta2 = $conexion->prepare("SELECT * FROM categoria");
-    $consulta2->execute();
-    $registro_categoria = $consulta2->fetchAll(PDO::FETCH_ASSOC);
+    $consulta = $conexion->prepare("SELECT * FROM categoria");
+    $consulta->execute();
+    $registro_categoria = $consulta->fetchAll(PDO::FETCH_ASSOC);
 ?>
+
+<?php
+    if(isset($_GET['txtID'])){
+        $txtID = isset($_GET['txtID'])?$_GET['txtID']:"";
+        $consulta2 = $conexion->prepare("SELECT * FROM subcategoria WHERE id_subcategoria=:id");
+        $consulta2->bindParam(":id", $txtID);
+        $consulta2->execute();
+        $registro_subcategoria = $consulta2->fetch(PDO::FETCH_LAZY);
+    }
+?>
+
+<?php
+    if($_POST){
+        print_r($_POST);
+        try {
+            $txtID = isset($_POST['idsubcategoria'])?$_POST['idsubcategoria']:"";
+            $nombresubcategoria = isset($_POST['nombresubcategoria'])?$_POST['nombresubcategoria']:"";
+            $idcategoria = isset($_POST['idcategoria'])?$_POST['idcategoria']:"";
+
+            // echo "Valor de id_categoria a actualizar: " . $idcategoria;
+
+            $consulta3 = $conexion->prepare("UPDATE subcategoria SET nombre=:nombre, id_categoria=:idcategoria WHERE id_subcategoria=:id");
+            $consulta3->bindParam(":nombre", $nombresubcategoria);
+            $consulta3->bindParam(":idcategoria", $idcategoria);
+            $consulta3->bindParam(":id", $txtID);
+            $consulta3->execute();
+            // header("Location:index.php");
+            echo '
+                <script>
+                    document.addEventListener("DOMContentLoaded", function(){
+                        Swal.fire({
+                            icon: "success",
+                            title: "Exito",
+                            text: "Registro actualizado con exito"
+                        }).then(function(){
+                            window.location.href="index.php";
+                        })
+                    })
+                </script>
+            ';
+        } catch (PDOException $e) {
+            echo "Error en la base de datos: " . $e->getMessage();
+        }
+
+    }
+?>
+
 
 <!DOCTYPE html>
 <html lang="es" data-bs-theme="dark">
@@ -24,6 +71,7 @@
     <link rel="stylesheet" href="../css/style.css">
     <!-- CDN datatable -->
     <link rel="stylesheet" href="https://cdn.datatables.net/2.0.2/css/dataTables.dataTables.css" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 </head>
 
@@ -173,6 +221,22 @@
                         <div class="card-body table-responsive">
                             <form action="#" method="post">
                                 <div class="mb-3">
+                                    <label for="idsubcategoria" class="form-label">Id.</label>
+                                    <input
+                                        type="text"
+                                        class="form-control"
+                                        name="idsubcategoria"
+                                        id="idsubcategoria"
+                                        aria-describedby="helpId"
+                                        placeholder="ID Subcategoria"
+                                        readonly
+                                        value="<?php echo $registro_subcategoria['id_subcategoria'];?>"
+                                        
+                                    />
+                                    <small id="helpId" class="form-text text-muted">Help text</small>
+                                </div>
+                                
+                                <div class="mb-3">
                                     <label for="nombresubcategoria" class="form-label">Nombre:</label>
                                     <input
                                         type="text"
@@ -181,6 +245,8 @@
                                         id="nombresubcategoria"
                                         aria-describedby="helpId"
                                         placeholder="Nombre de la subcategoria"
+                                        value = "<?php echo $registro_subcategoria['nombre']; ?>"
+                                        
                                     />
                                 </div>
                                 <div class="mb-3">
@@ -190,17 +256,21 @@
                                         name="idcategoria"
                                         id="idcategoria"
                                     >
-                                    <?php foreach($registro_categoria as $categoria) {?>
-                                        <option <?php echo $categoria['id_categoria']; ?> ><?php echo $categoria['nombre']; ?></option>
+                                    <?php foreach($registro_categoria as $categoria){ ?>
+                                        <option 
+                                        <?php echo ($registro_subcategoria['id_categoria']== $categoria['id_categoria'])?"Selected":"" ?>
+                                        value="<?php echo $categoria['id_categoria']; ?>">
+                                            <?php echo $categoria['nombre'];?>
+                                        </option>
                                     <?php } ?>
                                     </select>
                                 </div>
 
                                 <button
-                                    type="button"
+                                    type="submit"
                                     class="btn btn-success"
                                 >
-                                    Agregar
+                                    Actualizar
                                 </button>
                                 
                                 <a
@@ -254,6 +324,9 @@
     src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" 
     crossorigin="anonymous"></script>
     <script src="https://cdn.datatables.net/2.0.2/js/dataTables.js"></script>
+
+    <!-- cdn sweet alert -->
+    <!-- <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> -->
 
     <script>
         $(document).ready(function(){

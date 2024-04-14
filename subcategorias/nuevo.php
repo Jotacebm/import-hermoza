@@ -9,6 +9,72 @@
     $registro_categoria = $consulta2->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
+<?php
+    function alerta($icono, $titulo, $texto){
+        echo '
+            <script>
+                document.addEventListener("DOMContentLoaded", function(){
+                    Swal.fire({
+                        icon: "'.$icono.'",
+                        title: "'.$titulo.'",
+                        text: "'.$texto.'"
+                    })
+                })
+            </script>
+        ';
+    }
+?>
+
+<?php
+    if($_POST){
+        $nombresubcategoria = isset($_POST['nombresubcategoria'])?$_POST['nombresubcategoria']:"";
+        $idCategoria = isset($_POST['idcategoria'])?$_POST['idcategoria']:"";
+        if(empty($nombresubcategoria)){
+            //echo "El nombre de la subcategoria no puede estar vacio";
+            alerta("warning", "Alerta", "El nombre de la subcategoria no puede estar vacio");
+        }
+        else{
+            $nombresanitizadosubcategoria = filter_var($nombresubcategoria, FILTER_SANITIZE_STRING);
+            if(preg_match('/^[a-zA-Z0-9\s()]+$/',$nombresanitizadosubcategoria)){
+                $consulta3 = $conexion->prepare("INSERT INTO subcategoria (id_subcategoria, nombre, id_categoria) VALUES(NULL,:nombre,:id_categoria)");
+                $consulta3->bindParam(":nombre", $nombresanitizadosubcategoria);
+                $consulta3->bindParam(":id_categoria", $idCategoria);
+                try {
+                    if($consulta3->execute()){
+                        //echo "Subcategoria agregada con exito";
+                        echo '
+                            <script>
+                                document.addEventListener("DOMContentLoaded", function(){
+                                    Swal.fire({
+                                        icon: "success",
+                                        title: "Exito",
+                                        text: "Subcategoria agregada con exito"
+                                    }).then( function() {
+                                        window.location.href ="index.php";
+                                    })
+                                })
+                            </script>
+                        ';
+                    }
+                } catch (PDOException $e) {
+                    if($e->errorInfo[1]==1062){
+                        //echo "El nombre de la subcategoria no puede estar repetida";
+                        alerta("warning", "Alerta", "El nombre de la subcategoria no puede estar repetido");
+                    }
+                    else{
+                        //echo "Error en la insercion en la bd";
+                        alerta("error", "Error", "Error en la insercion en la bd");
+                    }
+                }
+            }
+            else{
+                //echo "El nombre solo puede contener letras o numeros";
+                alerta("warning", "Alerta", "El nombre de la categoria solo puede contener letras o numeros");
+            }
+        }
+    }
+?>
+
 <!DOCTYPE html>
 <html lang="es" data-bs-theme="dark">
 
@@ -183,13 +249,13 @@
                                         id="idcategoria"
                                     >
                                     <?php foreach($registro_categoria as $categoria) {?>
-                                        <option <?php echo $categoria['id_categoria']; ?> ><?php echo $categoria['nombre']; ?></option>
+                                        <option value="<?php echo $categoria['id_categoria']; ?>" ><?php echo $categoria['nombre']; ?></option>
                                     <?php } ?>
                                     </select>
                                 </div>
 
                                 <button
-                                    type="button"
+                                    type="submit"
                                     class="btn btn-success"
                                 >
                                     Agregar
@@ -202,10 +268,7 @@
                                     href="index.php"
                                     role="button"
                                     >Cancelar</a
-                                >
-                                
-                                
-                                
+                                >  
                             </form>
                         </div>
                     </div>
@@ -246,6 +309,8 @@
     src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" 
     crossorigin="anonymous"></script>
     <script src="https://cdn.datatables.net/2.0.2/js/dataTables.js"></script>
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
         $(document).ready(function(){
