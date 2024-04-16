@@ -44,15 +44,22 @@
                         </a>
                     </li>
                     <li class="sidebar-item">
-                        <a href="#" class="sidebar-link collapsed" data-bs-target="#pages" data-bs-toggle="collapse" aria-expanded="false">
+                        <a href="categorias/index.php" class="sidebar-link" >
                             <i class="ri-list-view"></i>
-                            Categorias
+                            Categoriassss
                         </a>
   
                     </li>
+
                     <li class="sidebar-item">
-                        <a href="#" class="sidebar-link collapsed" data-bs-target="#posts" data-bs-toggle="collapse"
-                            aria-expanded="false">
+                        <a href="subcategorias/index.php" class="sidebar-link">
+                            <i class="ri-list-view"></i>
+                            Subcategorias
+                        </a>
+          
+                    </li>
+                    <li class="sidebar-item">
+                        <a href="marcas/index.php" class="sidebar-link">
                             <i class="ri-list-check"></i>
                             Marcas
                         </a>
@@ -62,7 +69,7 @@
                     <li class="sidebar-item">
                         <a href="#" class="sidebar-link collapsed" data-bs-target="#posts" data-bs-toggle="collapse" aria-expanded="false">
                             <i class="ri-box-3-line"></i>
-                            <small>Productos</small>
+                            Productos
                         </a>
                        
                     </li>
