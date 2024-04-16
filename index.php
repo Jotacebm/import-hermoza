@@ -46,7 +46,7 @@
                     <li class="sidebar-item">
                         <a href="categorias/index.php" class="sidebar-link" >
                             <i class="ri-list-view"></i>
-                            Categoriassss
+                            Categorias
                         </a>
   
                     </li>
