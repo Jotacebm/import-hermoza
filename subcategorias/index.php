@@ -13,6 +13,29 @@
 
 ?>
 
+<?php
+    if(isset($_GET['txtID'])){
+        $txtID = isset($_GET['txtID'])?$_GET['txtID']:"";
+        $consulta2 = $conexion->prepare("DELETE FROM subcategoria WHERE id_subcategoria=:id");
+        $consulta2->bindParam(":id", $txtID);
+        $consulta2->execute();
+        //header("Location:index.php");
+        echo '
+            <script>
+                document.addEventListener("DOMContentLoaded", function(){
+                    Swal.fire({
+                        icon:"success",
+                        title:"Exito",
+                        text:"Registro eliminado"
+                    }).then(function(){
+                        window.location.href="index.php";
+                    })
+                })
+            </script>
+        ';
+    }
+?>
+
 <!DOCTYPE html>
 <html lang="es" data-bs-theme="dark">
 
@@ -28,6 +51,8 @@
     <link rel="stylesheet" href="../css/style.css">
     <!-- CDN datatable -->
     <link rel="stylesheet" href="https://cdn.datatables.net/2.0.2/css/dataTables.dataTables.css" />
+    <!-- cdn sweet alert -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 </head>
 
@@ -55,28 +80,14 @@
                             <i class="ri-list-view"></i>
                             Categorias
                         </a>
-                        <!-- <ul id="pages" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
-                            <li class="sidebar-item">
-                                <a href="#" class="sidebar-link">Page 1</a>
-                            </li>
-                            <li class="sidebar-item">
-                                <a href="#" class="sidebar-link">Page 2</a>
-                            </li>
-                        </ul> -->
+
                     </li>
                     <li class="sidebar-item">
                         <a href="#" class="sidebar-link collapsed" data-bs-target="#pages" data-bs-toggle="collapse" aria-expanded="false">
                             <i class="ri-list-view"></i>
                             Subcategorias
                         </a>
-                        <!-- <ul id="pages" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
-                            <li class="sidebar-item">
-                                <a href="#" class="sidebar-link">Page 1</a>
-                            </li>
-                            <li class="sidebar-item">
-                                <a href="#" class="sidebar-link">Page 2</a>
-                            </li>
-                        </ul> -->
+          
                     </li>
                     <li class="sidebar-item">
                         <a href="#" class="sidebar-link collapsed" data-bs-target="#posts" data-bs-toggle="collapse"
@@ -84,17 +95,7 @@
                             <i class="ri-list-check"></i>
                             Marcas
                         </a>
-                        <!-- <ul id="posts" class="sidebar-dropdown list-unstyled collapse" data-bs-parent="#sidebar">
-                            <li class="sidebar-item">
-                                <a href="#" class="sidebar-link">Post 1</a>
-                            </li>
-                            <li class="sidebar-item">
-                                <a href="#" class="sidebar-link">Post 2</a>
-                            </li>
-                            <li class="sidebar-item">
-                                <a href="#" class="sidebar-link">Post 3</a>
-                            </li>
-                        </ul> -->
+
                     </li>
 
                     <li class="sidebar-item">
@@ -234,7 +235,7 @@
                                                 name=""
                                                 id=""
                                                 class="btn btn-danger"
-                                                href="#"
+                                                href="javascript:borrar(<?php echo $subcategoria['id_subcategoria']; ?>)"
                                                 role="button"
                                                 >Eliminar</a
                                             >
@@ -299,6 +300,20 @@
                 }
             });
         });
+    </script>
+
+    <script>
+        function borrar(id){
+            Swal.fire({
+                title: "¿Realmente Desea Eliminar?",
+                showCancelButton:true,
+                confirmTextButton: "Si, borrar"
+            }).then((result)=>{
+                if(result.isConfirmed){
+                    window.location = "index.php?txtID=" + id;
+                }
+            })
+        }
     </script>
 </body>
 
