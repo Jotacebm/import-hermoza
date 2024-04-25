@@ -1,0 +1,478 @@
+<?php include("../conexion/bd.php"); ?>
+
+<?php 
+    $consulta = $conexion->prepare("SELECT * FROM marca");
+    $consulta->execute();
+    $registro_marcas = $consulta->fetchAll(PDO::FETCH_ASSOC);
+
+?>
+
+<?php
+    $consulta2 = $conexion->prepare("SELECT * FROM categoria");
+    $consulta2->execute();
+    $registro_categoria = $consulta2->fetchAll(PDO::FETCH_ASSOC);
+?>
+
+<?php
+    $consulta3 = $conexion->prepare("SELECT * FROM subcategoria");
+    $consulta3->execute();
+    $registro_subcategoria = $consulta3->fetchAll(PDO::FETCH_ASSOC);
+?>
+
+<?php
+    // if($_POST){
+    //     $nombremarca = isset($_POST['nombremarca'])?$_POST['nombremarca']:"";
+    //     if(empty($nombremarca)){
+    //         //echo "El nombre de la marca no puede estar vacio";
+    //         alerta("warning", "Alerta", "El nombre de la marca no puede estar vacio");
+    //     }
+    //     else{
+    //         $nombreMarcaSanitizado = filter_var($nombremarca, FILTER_SANITIZE_STRING);
+    //         if(preg_match('/^[a-zA-Z0-9\s()]+$/', $nombreMarcaSanitizado)){
+    //             $consulta1 = $conexion->prepare("INSERT INTO marca (id_marca,nombre) VALUES(NULL, :nombre)");
+    //             $consulta1->bindParam(":nombre", $nombreMarcaSanitizado);
+    //             try {
+    //                 if($consulta1->execute()){
+    //                     //echo "Nombre de marca agregado";
+    //                     //alerta("success", "Exito", "Nombre de la marca agregado con exito");
+    //                     echo '
+    //                         <script>
+    //                             document.addEventListener("DOMContentLoaded", function(){
+    //                                 Swal.fire({
+    //                                     icon: "success",
+    //                                     title: "Exito",
+    //                                     text: "Marca agregada con exito"
+
+    //                                 }).then(function(){
+    //                                     window.location.href="index.php"
+    //                                 })
+    //                             })
+    //                         </script>
+    //                     ';
+    //                 }
+    //             } catch (PDOException $e) {
+    //                 if($e->errorInfo[1] == 1062){
+    //                     //echo "El nombre de la marca ya existe";
+    //                     alerta("warning", "Alerta", "El nombre de la marca ya existe");
+    //                 }
+    //                 else{
+    //                     //echo "Error en la insercion en la bd";
+    //                     alerta("error","Error", "Error en la insercion en la bd");
+    //                 }
+
+    //             }
+    //         }
+    //         else{
+    //             //echo "El nombre de la marca solo puede contener letras o numeros";
+    //             alerta("warning",  "Alerta", "El nombre de la marca solo puede contener letras o numeros");
+    //         }
+    //     }
+    // }
+?>
+
+<?php
+
+?>
+
+<!DOCTYPE html>
+<html lang="es" data-bs-theme="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Productos</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/css/bootstrap.min.css">
+    <!-- <script src="https://kit.fontawesome.com/ae360af17e.js" crossorigin="anonymous"></script> -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.2.0/remixicon.css">
+    <!-- <link rel="stylesheet" href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css"> -->
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/2.0.2/css/dataTables.dataTables.css" />
+</head>
+
+<body>
+    <div class="wrapper">
+        <aside id="sidebar" class="js-sidebar">
+            <!-- Content For Sidebar -->
+            <div class="h-100">
+                <div class="sidebar-logo text-center">
+                    <a href="#">Import Hermoza</a>
+                </div>
+                <ul class="sidebar-nav">
+                    <li class="sidebar-header">
+                        Administrador de Elementos
+                    </li>
+                    
+                    <li class="sidebar-item">
+                        <a href="#" class="sidebar-link">
+                            <i class="ri-home-8-line"></i>
+                            Inicio
+                        </a>
+                    </li>
+                    <li class="sidebar-item">
+                        <a href="#" class="sidebar-link collapsed" data-bs-target="#pages" data-bs-toggle="collapse" aria-expanded="false">
+                            <i class="ri-list-view"></i>
+                            Categorias
+                        </a>
+            
+                    </li>
+                    <li class="sidebar-item">
+                        <a href="#" class="sidebar-link collapsed" data-bs-target="#pages" data-bs-toggle="collapse" aria-expanded="false">
+                            <i class="ri-list-view"></i>
+                            Subcategorias
+                        </a>
+                
+                    </li>
+                    <li class="sidebar-item">
+                        <a href="#" class="sidebar-link collapsed" data-bs-target="#posts" data-bs-toggle="collapse"
+                            aria-expanded="false">
+                            <i class="ri-list-check"></i>
+                            Marcas
+                        </a>
+    
+                    </li>
+
+                    <li class="sidebar-item">
+                        <a href="#" class="sidebar-link collapsed" data-bs-target="#posts" data-bs-toggle="collapse" aria-expanded="false">
+                            <i class="ri-box-3-line"></i>
+                            <small>Productos</small>
+                        </a>
+                    </li>
+                    <li class="sidebar-item">
+                        <a href="#" class="sidebar-link collapsed" data-bs-target="#auth" data-bs-toggle="collapse"
+                            aria-expanded="false">
+                            <i class="ri-user-line"></i>
+                            Usuarios
+                        </a>
+        
+                
+                    </li>
+                    
+                </ul>
+            </div>
+        </aside>
+        <div class="main">
+            <nav class="navbar navbar-expand px-3 border-bottom">
+                <button class="btn" id="sidebar-toggle" type="button">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="navbar-collapse navbar">
+                    <ul class="navbar-nav">
+                        <li class="nav-item dropdown">
+                            <a href="#" data-bs-toggle="dropdown" class="nav-icon pe-md-0">
+                                <img src="../image/profile.jpg" class="avatar img-fluid rounded" alt="">
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-end">
+                                <a href="#" class="dropdown-item">Perfil</a>
+                                <a href="#" class="dropdown-item">Configuracion</a>
+                                <a href="#" class="dropdown-item">Salir</a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <main class="content px-3 py-2">
+                <div class="container-fluid">
+                    <div class="mb-3">
+                        <h4>Panel de administración</h4>
+                    </div>
+                    <!-- <div class="row">
+                        <div class="col-12 col-md-6 d-flex">
+                            <div class="card flex-fill border-0 illustration">
+                                <div class="card-body p-0 d-flex flex-fill">
+                                    <div class="row g-0 w-100">
+                                        <div class="col-6">
+                                            <div class="p-3 m-1">
+                                                <h4>Bienvenido, Admin</h4>
+                                                <p class="mb-0">Panel de administración, Import Hermoza</p>
+                                            </div>
+                                        </div>
+                                        <div class="col-6 align-self-end text-end">
+                                            <img src="image/customer-support.jpg" class="img-fluid illustration-img"
+                                                alt="">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6 d-flex">
+                            <div class="card flex-fill border-0">
+                                <div class="card-body py-4">
+                                    <div class="d-flex align-items-start">
+                                        <div class="flex-grow-1">
+                                            <h4 class="mb-2">
+                                                $ 78.00
+                                            </h4>
+                                            <p class="mb-2">
+                                                Ganancias totales
+                                            </p>
+                                            <div class="mb-0">
+                                                <span class="badge text-success me-2">
+                                                    +9.0%
+                                                </span>
+                                                <span class="text-muted">
+                                                    Mes anterior
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div> -->
+                    <!-- Table Element -->
+                    <div class="card border-0">
+                        <div class="card-header">
+                            <h5 class="card-title">
+                                AGREGAR PRODUCTOS
+                            </h5>
+                            <h6 class="card-subtitle text-muted">
+                                
+                            </h6>
+                        </div>
+                        <div class="card-body table-responsive">
+                            <form action="#" method="post">
+                                <div class="row">
+                                    <div class="col-xl-6 col-lg-6">
+                                        <div class="mb-3">
+                                        <label for="nombreproducto" class="form-label">Nombre.</label>
+                                        <input
+                                            type="text"
+                                            class="form-control"
+                                            name="nombreproducto"
+                                            id="nombreproducto"
+                                            aria-describedby="helpId"
+                                            placeholder="Nombre del producto"
+                                        />
+                                        
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xl-6 col-lg-6">
+                                        <div class="mb-3">
+                                            <label for="tipo" class="form-label">Tipo</label>
+                                            <input
+                                                type="text"
+                                                class="form-control"
+                                                name="tipo"
+                                                id="tipo"
+                                                aria-describedby="helpId"
+                                                placeholder="Ingrese el tipo"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-xl-6 col-lg-6">
+                                        <div class="mb-3">
+                                            <label for="modelo" class="form-label">Modelo</label>
+                                            <input
+                                                type="text"
+                                                class="form-control"
+                                                name="modelo"
+                                                id="modelo"
+                                                aria-describedby="helpId"
+                                                placeholder="Ingrese el modelo"
+                                            />
+                                            
+                                        </div>
+                                    </div>
+
+                                    <div class="col-xl-6 col-lg-6">
+
+                                        <div class="mb-3">
+                                            <label for="descripcion" class="form-label">Descripcion</label>
+                                            <textarea class="form-control" name="descripcion" id="descripcion" rows="3">
+
+                                            </textarea>
+                                        </div>
+                                        
+                                        
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-xl-6 col-lg-6">
+                                        <div class="mb-3">
+                                            <label for="pais" class="form-label">Pais</label>
+                                            <input
+                                                type="text"
+                                                class="form-control"
+                                                name="pais"
+                                                id="pais"
+                                                aria-describedby="helpId"
+                                                placeholder="Ingrese el pais"
+                                            />
+                                        </div>
+                                        
+                                    </div>
+                                    <div class="col-xl-6 col-lg-6">
+                                        <div class="mb-3">
+                                            <label for="peso" class="form-label">Peso</label>
+                                            <input
+                                                type="text"
+                                                class="form-control"
+                                                name="peso"
+                                                id="peso"
+                                                aria-describedby="helpId"
+                                                placeholder="Ingrese el peso"
+                                            />
+                                            
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-xl-6 col-lg-6">
+                                        <div class="mb-3">
+                                            <label for="categoria" class="form-label">Categoria.</label>
+                                            <select
+                                                class="form-select form-select-lg"
+                                                name="categoria"
+                                                id="categoria"
+                                            >
+                                                <option selected>Seleccione una categoria</option>
+                                                <?php foreach($registro_categoria as $categoria){ ?>
+                                                    <option value="<?php echo $categoria['id_categoria'] ?>"><?php echo $categoria['nombre']; ?></option>
+                                                <?php } ?>
+                                            </select>
+                                        </div>
+                                        
+                                    </div>
+                                    <div class="col-xl-6 col-lg-6">
+                                        <div class="mb-3">
+                                            <label for="subcategoria" class="form-label">Subcategoria</label>
+                                            <select
+                                                class="form-select form-select-lg"
+                                                name="subcategoria"
+                                                id="subcategoria"
+                                            >
+                                                <option selected>Seleccione subcategoria</option>
+                                                
+                                            </select>
+                                        </div>
+                                        
+                                        
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-xl-6 col-lg-6">
+                                        <div class="mb-3">
+                                            <label for="fichatecnica" class="form-label">Ficha Tecnica</label>
+                                            <input
+                                                type="file"
+                                                class="form-control"
+                                                name="fichatecnica"
+                                                id="fichatecnica"
+                                                placeholder="Ficha tecnica"
+                                                aria-describedby="fileHelpId"
+                                            />
+                                        </div>                                        
+                                    </div>
+                                    <div class="col-xl-6 col-lg-6">
+                                        
+                                        <div class="mb-3">
+                                            <label for="foto" class="form-label">Foto.</label>
+                                            <input
+                                                type="file"
+                                                class="form-control"
+                                                name="foto"
+                                                id="foto"
+                                                placeholder="Foto"
+                                                aria-describedby="fileHelpId"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-xl-6 col-lg-6">
+
+                                        <div class="mb-3">
+                                            <label for="marca" class="form-label">Marca</label>
+                                            <select
+                                                class="form-select form-select-lg"
+                                                name="marca"
+                                                id="marca"
+                                            >
+                                                <option selected>Seleccione una marca</option>
+                                                <?php foreach($registro_marcas as $marca){ ?>
+                                                    <option value="<?php echo $marca['id_marca'];?>"><?php echo $marca['nombre']; ?></option>
+                                                <?php } ?>
+                                                
+                                            </select>
+                                        </div>
+
+
+                                    </div>
+                                </div>
+
+                                <button
+                                    type="submit"
+                                    class="btn btn-primary"
+                                >
+                                    Agregar 
+                                </button>
+
+                                <a
+                                    name=""
+                                    id=""
+                                    class="btn btn-danger"
+                                    href="index.php"
+                                    role="button"
+                                    >Cancelar</a
+                                >
+                                
+                                
+                                
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </main>
+            <a href="#" class="theme-toggle">
+                <!-- <i class="fa-regular fa-moon"></i>
+                <i class="fa-regular fa-sun"></i> -->
+                <i class="ri-moon-fill fa-moon"></i>
+                <i class="ri-sun-line fa-sun"></i>
+            </a>
+            <footer class="footer">
+                <div class="container-fluid">
+                    <div class="row text-muted">
+                        <div class="col-6 text-start">
+                            <p class="mb-0">
+                                <a href="#" class="text-muted">
+                                    <strong>Import Hermoza S.A.C</strong>
+                                </a>
+                            </p>
+                        </div>
+                        <div class="col-6 text-end">
+                            <ul class="list-inline">
+                                <li class="list-inline-item">
+                                    <a href="#" class="text-muted">Desarrollado por Corporacion Sivana</a>
+                                </li>
+
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <!-- Cdn Datatables -->
+    <script src="https://cdn.datatables.net/2.0.2/js/dataTables.js"></script>
+    <!-- Cdn SweetAlert2 CSS -->
+    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css"> -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="../js/script.js"></script>
+    <script src="../js/peticion.js"></script>
+
+
+</body>
+
+</html>
